@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Auth System</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="../index.html" class="logo">
+                    <img src="../assets/images/logos/logo-icon.svg" alt="Auth System">
+                </a>
+                <h1>Welcome back</h1>
+                <p>Please enter your credentials to login</p>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    <a href="forgot-password.html" class="forgot-password">Forgot password?</a>
+                </div>
+                <div class="form-group remember-me">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="register.html">Sign up</a></p>
+            </div>
+        </div>
+
+        <div class="auth-illustration">
+            <img src="../assets/images/illustrations/login.svg" alt="Login Illustration">
+        </div>
+    </div>
+
+    <script src="../assets/js/core/auth.js"></script>
+    <script src="../assets/js/core/storage.js"></script>
+    <script src="../assets/js/core/session.js"></script>
+    <script src="../assets/js/modules/form-validation.js"></script>
+    <script src="../assets/js/modules/notifications.js"></script>
+    <script src="../assets/js/modules/loader.js"></script>
+    
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            
+            // Simple client-side validation
+            if (!email || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+            
+            // Check if user exists and credentials match
+            const user = AuthService.login(email, password);
+            
+            if (user) {
+                SessionService.createSession(user, remember);
+                showNotification('Login successful!', 'success');
+                setTimeout(() => {
+                    window.location.href = '../app/dashboard.html';
+                }, 1000);
+            } else {
+                showNotification('Invalid credentials', 'error');
+            }
+        });
+    </script>
+</body>
+                      </html>
