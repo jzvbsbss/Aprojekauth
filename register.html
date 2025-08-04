@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Auth System</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="../index.html" class="logo">
+                    <img src="../assets/images/logos/logo-icon.svg" alt="Auth System">
+                </a>
+                <h1>Create an account</h1>
+                <p>Get started with our secure authentication system</p>
+            </div>
+
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="password-strength"></div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <div class="form-group terms">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Register</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html">Sign in</a></p>
+            </div>
+        </div>
+
+        <div class="auth-illustration">
+            <img src="../assets/images/illustrations/signup.svg" alt="Signup Illustration">
+        </div>
+    </div>
+
+    <script src="../assets/js/core/auth.js"></script>
+    <script src="../assets/js/core/storage.js"></script>
+    <script src="../assets/js/core/crypto.js"></script>
+    <script src="../assets/js/modules/form-validation.js"></script>
+    <script src="../assets/js/modules/notifications.js"></script>
+    
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Client-side validation
+            if (!name || !email || !password || !confirmPassword) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+            
+            if (!document.getElementById('terms').checked) {
+                showNotification('You must agree to the terms', 'error');
+                return;
+            }
+            
+            // Check if user already exists
+            if (AuthService.userExists(email)) {
+                showNotification('User with this email already exists', 'error');
+                return;
+            }
+            
+            // Create new user
+            const user = AuthService.register(name, email, password);
+            
+            if (user) {
+                showNotification('Registration successful!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'verify-email.html?email=' + encodeURIComponent(email);
+                }, 1500);
+            } else {
+                showNotification('Registration failed', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
